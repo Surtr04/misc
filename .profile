@@ -71,14 +71,23 @@ On_IPurple="\[\033[10;95m\]"  # Purple
 On_ICyan="\[\033[0;106m\]"    # Cyan
 On_IWhite="\[\033[0;107m\]"   # White
 
-PATH=$PATH:$HOME/.rvm/bin:/Users/rmb/.local/bin:/usr/texbin:/Users/rmb/.bin:/usr/local/cuda/bin # Add RVM to PATH for scripting
-DYLD_LIBRARY_PATH=/usr/local/cuda/lib:$DYLD_LIBRARY_PATH
+DYLD_LIBRARY_PATH=/usr/local/cuda/lib:/usr/local/gcc-4.7.2/lib:/usr/local/Cellar/papi/lib:$DYLD_LIBRARY_PATH
+
+export CLASSPATH=$CLASSPATH:~/.bin/jars/antlr-3.4-complete.jar
+
+export PATH=/opt/local/bin:/opt/local/sbin:$PATH
+export PATH=/usr/local/gcc-4.7.2/bin:~/.bin:~/perl5/perlbrew/perls/perl-5.16.2/bin:/usr/local/bin:/usr/texbin:/usr/local/sbin:/Developer/NVIDIA/CUDA-5.0/bin:$HOME/.rvm/bin:$PATH
+
+
+#export PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting\
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
 #git text completion
 source /usr/local/etc/bash_completion.d/git-prompt.sh
 source /usr/local/etc/bash_completion.d/git-completion.bash
+
+source ~/perl5/perlbrew/etc/bashrc
 
 export CLICOLOR=1
 export SSH=rmb04.homeip.net:$SSH
@@ -88,28 +97,30 @@ if [ $? -eq 0 ]; then \
   echo "$(echo `git status` | grep "nothing to commit" > /dev/null 2>&1; \
   if [ "$?" -eq "0" ]; then \
     # @4 - Clean repository - nothing to commit
-    echo "'$Green'"$(__git_ps1 " {%s}"); \
+    echo "'$Green'"$(__git_ps1 " {%s}");\
   else \
     # @5 - Changes to working tree
-    echo "'$IRed'"$(__git_ps1 " {%s}"); \
-  fi) '$BYellow$PathShort$Color_Off'"; \
-fi) ]'
+    echo "'$IRed'"$(__git_ps1 " {%s}");\
+  fi)'$BYellow$PathShort$Color_Off'";\
+fi) ] '
 
 #export PS1='[\u@\h \W$(__git_ps1 " (%s)")]\$  '
 
 export troglodita="https://troglodita.di.uminho.pt/svn/el1213"
 
 alias vnc_home='open vnc://rmb04.homeip.net'
-alias ssh_home='ssh rmb@rmb04.homeip.net'
-alias ssh_um='ssh a54770@ssh.alunos.di.uminho.pt'
 alias ftp_home='ftp rmb04.homeip.net'
-alias ssh_search='ssh cpd22781@search.di.uminho.pt'
-alias ssh_search1='ssh cpd22781@search1.di.uminho.pt'
-alias ftp_home='ftp rmb04.homeip.net'
+
 alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
+alias grep="grep --color='auto'"
 alias doc="cd ~/Documents"
+alias desk="cd ~/Desktop"
+alias cpd="cd ~/Documents/MEI/CPD/PI-CPD"
+alias el="cd ~/Documents/MEI/EL/PI-EL"
+alias htdocs="cd /Applications/MAMP/htdocs"
+
 
 md() { mkdir -p "$@" && cd "$@"; }
 
@@ -118,15 +129,26 @@ function gcc_cg {
 
 }
 
-put_search() {	  
-	scp "$@" cpd22781@search.di.uminho.pt:~;
+function put_search() {	  
+	scp -r "$@" cpd22781@search.di.uminho.pt:~;
 }
 
-##
-# Your previous /Users/rmb/.profile file was backed up as /Users/rmb/.profile.macports-saved_2012-10-22_at_03:11:42
-##
+function put_prociv() {    
+  scp -r "$@" cpd22781@ie.grid.prociv.pt:~;
+}
 
-# MacPorts Installer addition on 2012-10-22_at_03:11:42: adding an appropriate PATH variable for use with MacPorts.
-export PATH=/opt/local/bin:/opt/local/sbin:$PATH
-# Finished adapting your PATH environment variable for use with MacPorts.
+function mark() {
+  if [ $# -eq 1 ]; then
+    export "$1=cd `pwd`";
+  fi
+}
+
+function goto() {
+  if [ $# -eq 1 ]; then 
+    if env | grep "^$1=cd " > /dev/null; then
+     a=$(env | grep "^$1=cd " | cut -d= -f2)
+     eval $a;
+    fi
+  fi
+}
 
