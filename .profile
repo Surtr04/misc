@@ -143,7 +143,12 @@ function mark() {
   fi
 
   if [[ $# -eq 2 && $1 = '-p' ]]; then 
-    echo "$2=cd `pwd`" >> ~/.markrc;
+    if grep $2 ~/.markrc > /dev/null; then 
+      sed -i '' -e "s:$2\=.*$:$2\=`pwd`:g" ~/.markrc;
+      echo "$2 entry changed";    
+    else
+      echo "$2=cd `pwd`" >> ~/.markrc;
+    fi
   fi
 }
 
