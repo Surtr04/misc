@@ -141,6 +141,10 @@ function mark() {
   if [ $# -eq 1 ]; then
     export "$1=cd `pwd`";
   fi
+
+  if [[ $# -eq 2 && $1 = '-p' ]]; then 
+    echo "$2=cd `pwd`" >> ~/.markrc;
+  fi
 }
 
 function goto() {
@@ -148,7 +152,11 @@ function goto() {
     if env | grep "^$1=cd " > /dev/null; then
      a=$(env | grep "^$1=cd " | cut -d= -f2)
      eval $a;
-    fi
+   else
+    a=$(grep "^$1=cd " ~/.markrc | cut -d= -f2)
+    eval $a;
+  fi
+
   fi
 }
 
